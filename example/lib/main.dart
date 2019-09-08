@@ -14,7 +14,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
   @override
   void initState() {
     super.initState();
@@ -32,7 +31,8 @@ class _MyAppState extends State<MyApp> {
 
   /// Prints a sample pdf printer
   void printPdfFile() async {
-    var file = await _downloadFile("http://www.africau.edu/images/default/sample.pdf", "test.pdf");
+    var file = await _downloadFile(
+        "http://www.africau.edu/images/default/sample.pdf", "test.pdf");
     await FlutterPdfPrinter.printFile(file.path);
   }
 
