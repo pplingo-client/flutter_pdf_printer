@@ -9,10 +9,9 @@ class FlutterPdfPrinter {
   /// prints the file located at [filePath]
   /// throws FormatException if the path is null or empty
   static Future<void> printFile(String filePath) async {
-    if (filePath == null || filePath.isEmpty){
+    if (filePath == null || filePath.isEmpty) {
       throw FormatException("filePath given is null or empty");
     }
     await _channel.invokeMethod("printFile", {"file": filePath});
   }
-
 }
