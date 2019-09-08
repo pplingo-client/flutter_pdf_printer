@@ -1,8 +1,8 @@
 name: flutter_pdf_printer
 description: Print PDF Files
-version: 0.0.1
-author:
-homepage:
+version: 1.0.0
+author: Casey Daniel <casey@masterhealthsoftware.com>
+homepage: https://github.com/cadaniel/flutter_pdf_printer
 
 environment:
   sdk: ">=2.1.0 <3.0.0"

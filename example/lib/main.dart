@@ -30,8 +30,8 @@ class _MyAppState extends State<MyApp> {
     return file;
   }
 
-  // Platform messages are asynchronous, so we initialize in an async method.
-  void printFile() async {
+  /// Prints a sample pdf printer
+  void printPdfFile() async {
     var file = await _downloadFile("http://www.africau.edu/images/default/sample.pdf", "test.pdf");
     await FlutterPdfPrinter.printFile(file.path);
   }
@@ -46,7 +46,7 @@ class _MyAppState extends State<MyApp> {
         body: Center(
           child: RaisedButton(
             child: Text("Download and print pdf"),
-            onPressed: printFile,
+            onPressed: printPdfFile,
           ),
         ),
       ),
