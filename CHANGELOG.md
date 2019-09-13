@@ -9,3 +9,7 @@
 ## 1.0.0+1
 
 * longer description
+
+## 1.0.0+2 
+
+* Better description
