@@ -16,36 +16,22 @@ import android.print.PrintAttributes
 import android.print.PrintDocumentAdapter
 import android.print.PrintManager
 import android.print.PrintDocumentInfo
+import android.util.Base64
 import java.io.IOException
 import java.io.FileOutputStream
-import java.io.FileInputStream
-import java.io.File
 import java.io.OutputStream
-import java.io.InputStream
 
 @TargetApi(Build.VERSION_CODES.KITKAT)
 class FlutterPdfPrinterPlugin(private val mgr: PrintManager): MethodCallHandler, PrintDocumentAdapter() {
-  private var filePath: String? = null
+  private var b64Bytes: String? = null
 
-  override fun onWrite(pageRanges: Array<PageRange>, parcelFileDescriptor: ParcelFileDescriptor, cancellationSignal: CancellationSignal, writeResultCallback: PrintDocumentAdapter.WriteResultCallback) {
-    var `in`: InputStream? = null
+  override fun onWrite(pageRanges: Array<PageRange>, parcelFileDescriptor: ParcelFileDescriptor, cancellationSignal: CancellationSignal, writeResultCallback: WriteResultCallback) {
     var out: OutputStream? = null
     try {
-      val file = File(filePath)
-      `in` = FileInputStream(file)
+      val bytes = Base64.decode(b64Bytes, Base64.DEFAULT)
       out = FileOutputStream(parcelFileDescriptor.fileDescriptor)
 
-      val buf = ByteArray(16384)
-      var size: Int
-
-      do {
-        size = `in`.read(buf)
-        if ( size <= 0 || cancellationSignal.isCanceled) {
-          break
-        }
-        out.write(buf, 0, size)
-      } while(true)
-
+      out.write(bytes)
       if (cancellationSignal.isCanceled) {
         writeResultCallback.onWriteCancelled()
       } else {
@@ -55,7 +41,6 @@ class FlutterPdfPrinterPlugin(private val mgr: PrintManager): MethodCallHandler,
       writeResultCallback.onWriteFailed(e.message)
     } finally {
       try {
-        `in`!!.close()
         out!!.close()
       } catch (e: IOException) {
       }
@@ -63,7 +48,7 @@ class FlutterPdfPrinterPlugin(private val mgr: PrintManager): MethodCallHandler,
     }
   }
 
-  override fun onLayout(printAttributes: PrintAttributes, printAttributes1: PrintAttributes, cancellationSignal: CancellationSignal, layoutResultCallback: PrintDocumentAdapter.LayoutResultCallback, bundle: Bundle) {
+  override fun onLayout(printAttributes: PrintAttributes, printAttributes1: PrintAttributes, cancellationSignal: CancellationSignal, layoutResultCallback: LayoutResultCallback, bundle: Bundle) {
     if (cancellationSignal.isCanceled) {
       layoutResultCallback.onLayoutCancelled()
     } else {
@@ -86,7 +71,7 @@ class FlutterPdfPrinterPlugin(private val mgr: PrintManager): MethodCallHandler,
 
   override fun onMethodCall(call: MethodCall, result: Result) {
     if (call.method == "printFile") {
-      filePath = call.argument<String>("file")
+      b64Bytes = call.argument<String>("bytes")
       mgr.print("PrintFile", this, PrintAttributes.Builder().build())
       result.success(true)
     } else {

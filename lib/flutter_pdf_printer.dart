@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:io';
+import 'dart:convert';
 
 import 'package:flutter/services.dart';
 
@@ -12,6 +14,15 @@ class FlutterPdfPrinter {
     if (filePath == null || filePath.isEmpty) {
       throw FormatException("filePath given is null or empty");
     }
-    await _channel.invokeMethod("printFile", {"file": filePath});
+    var file = File(filePath);
+    var bytes = await file.readAsBytes();
+    var b64Bytes = base64Encode(bytes);
+    await printFileFromBytes(b64Bytes);
+  }
+
+  static Future<void> printFileFromBytes(String b64Bytes) async {
+    if (Platform.isAndroid || Platform.isIOS) {
+      await _channel.invokeMethod("printFile", {"bytes": b64Bytes});
+    }
   }
 }
