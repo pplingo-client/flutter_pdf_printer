@@ -16,7 +16,7 @@ public class SwiftFlutterPdfPrinterPlugin: NSObject, FlutterPlugin {
         let pdfFile = Data(base64Encoded: b64Bytes, options: .ignoreUnknownCharacters)!
         let printInfo = UIPrintInfo(dictionary: nil)
         printInfo.jobName = "Print Form"
-        printInfo.outputType = .photo
+        printInfo.outputType = .general
 
         let printController = UIPrintInteractionController.shared
         printController.printInfo = printInfo
