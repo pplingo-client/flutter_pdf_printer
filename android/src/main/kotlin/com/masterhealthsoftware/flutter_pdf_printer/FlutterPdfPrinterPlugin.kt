@@ -19,11 +19,39 @@ import android.print.PrintDocumentInfo
 import android.util.Base64
 import java.io.IOException
 import java.io.FileOutputStream
+import io.flutter.embedding.engine.plugins.FlutterPlugin
 import java.io.OutputStream
+import androidx.annotation.NonNull
+import android.util.Log
+import android.app.Activity
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
+import io.flutter.embedding.engine.plugins.activity.ActivityAware
 
 @TargetApi(Build.VERSION_CODES.KITKAT)
-class FlutterPdfPrinterPlugin(private val mgr: PrintManager): MethodCallHandler, PrintDocumentAdapter() {
+class FlutterPdfPrinterPlugin(): FlutterPlugin,ActivityAware, MethodCallHandler, PrintDocumentAdapter() {
   private var b64Bytes: String? = null
+  private lateinit var mgr: PrintManager
+  private  var activity:Activity? = null
+
+  override fun onDetachedFromActivity() {
+    this.activity = null
+  }
+  override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
+    onAttachedToActivity(binding)
+  }
+  override fun onAttachedToActivity(binding: ActivityPluginBinding) {
+    mgr = binding.activity.getSystemService(PRINT_SERVICE) as PrintManager;
+    this.activity = binding.activity
+
+  }
+  override fun onDetachedFromActivityForConfigChanges() {}
+
+  override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
+    var channel = MethodChannel(flutterPluginBinding.flutterEngine.dartExecutor, "flutter_pdf_printer")
+    channel.setMethodCallHandler(this)
+  }
+
+  override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {}
 
   override fun onWrite(pageRanges: Array<PageRange>, parcelFileDescriptor: ParcelFileDescriptor, cancellationSignal: CancellationSignal, writeResultCallback: WriteResultCallback) {
     var out: OutputStream? = null
@@ -61,15 +89,10 @@ class FlutterPdfPrinterPlugin(private val mgr: PrintManager): MethodCallHandler,
     }
   }
 
-  companion object {
-    @JvmStatic
-    fun registerWith(registrar: Registrar) {
-      val channel = MethodChannel(registrar.messenger(), "flutter_pdf_printer")
-      channel.setMethodCallHandler(FlutterPdfPrinterPlugin(registrar.activeContext().getSystemService(PRINT_SERVICE) as PrintManager))
-    }
-  }
+
 
   override fun onMethodCall(call: MethodCall, result: Result) {
+    Log.i("Method",call.method)
     if (call.method == "printFile") {
       b64Bytes = call.argument<String>("bytes")
       mgr.print("PrintFile", this, PrintAttributes.Builder().build())
@@ -78,4 +101,5 @@ class FlutterPdfPrinterPlugin(private val mgr: PrintManager): MethodCallHandler,
       result.notImplemented()
     }
   }
+
 }
