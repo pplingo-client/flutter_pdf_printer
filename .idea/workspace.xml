@@ -5,6 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ae095ca5-f4c7-4a48-bff8-8402b6f8f8a2" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/android/src/main/kotlin/com/masterhealthsoftware/flutter_pdf_printer/FlutterPdfPrinterPlugin.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/main/kotlin/com/masterhealthsoftware/flutter_pdf_printer/FlutterPdfPrinterPlugin.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
