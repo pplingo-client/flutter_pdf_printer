@@ -92,7 +92,6 @@ class FlutterPdfPrinterPlugin(): FlutterPlugin,ActivityAware, MethodCallHandler,
 
 
   override fun onMethodCall(call: MethodCall, result: Result) {
-    Log.i("Method",call.method)
     if (call.method == "printFile") {
       b64Bytes = call.argument<String>("bytes")
       mgr.print("PrintFile", this, PrintAttributes.Builder().build())
